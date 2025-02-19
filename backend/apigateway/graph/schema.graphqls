@@ -1,0 +1,16 @@
+# Sense API
+# ---------
+type Color {
+  r: Int
+  g: Int
+  b: Int
+}
+
+type Query {
+  color: Color
+}
+
+type Subscription {
+  color: Color
+}
+
