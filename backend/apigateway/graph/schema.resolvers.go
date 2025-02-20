@@ -12,15 +12,49 @@ import (
 	"github.com/3thanHead/apigateway/internal/service"
 )
 
-// Color is the resolver for the color field.
-func (r *queryResolver) Color(ctx context.Context) (*model.Color, error) {
-	panic(fmt.Errorf("not implemented: Color - color"))
+// Placeholder is the resolver for the placeholder field.
+func (r *queryResolver) Placeholder(ctx context.Context) (*string, error) {
+	panic(fmt.Errorf("not implemented: Placeholder - placeholder"))
 }
 
 // Color is the resolver for the color field.
 func (r *subscriptionResolver) Color(ctx context.Context) (<-chan *model.Color, error) {
-	ch := redisService.Subscribe("color")
-	return service.ReceiveColors(ctx, ch), nil
+	colorChan := make(chan *model.Color)
+	redisChan := redisService.Subscribe("color")
+	service.ReceiveData[*model.Color](ctx, redisChan, colorChan)
+	return colorChan, nil
+}
+
+// Temperature is the resolver for the temperature field.
+func (r *subscriptionResolver) Temperature(ctx context.Context) (<-chan *model.Temperature, error) {
+	temperatureChan := make(chan *model.Temperature)
+	redisChan := redisService.Subscribe("temperature")
+	service.ReceiveData[*model.Temperature](ctx, redisChan, temperatureChan)
+	return temperatureChan, nil
+}
+
+// Humidity is the resolver for the humidity field.
+func (r *subscriptionResolver) Humidity(ctx context.Context) (<-chan *model.Humidity, error) {
+	humidityChan := make(chan *model.Humidity)
+	redisChan := redisService.Subscribe("humidity")
+	service.ReceiveData[*model.Humidity](ctx, redisChan, humidityChan)
+	return humidityChan, nil
+}
+
+// Pressure is the resolver for the pressure field.
+func (r *subscriptionResolver) Pressure(ctx context.Context) (<-chan *model.Pressure, error) {
+	pressureChan := make(chan *model.Pressure)
+	redisChan := redisService.Subscribe("pressure")
+	service.ReceiveData[*model.Pressure](ctx, redisChan, pressureChan)
+	return pressureChan, nil
+}
+
+// Accelerometer is the resolver for the accelerometer field.
+func (r *subscriptionResolver) Orientation(ctx context.Context) (<-chan *model.Orientation, error) {
+	orientationChan := make(chan *model.Orientation)
+	redisChan := redisService.Subscribe("orientation")
+	service.ReceiveData[*model.Orientation](ctx, redisChan, orientationChan)
+	return orientationChan, nil
 }
 
 // Query returns QueryResolver implementation.

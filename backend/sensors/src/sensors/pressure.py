@@ -5,4 +5,6 @@ class PressureSensor(Sensor):
         super().__init__("pressure")
 
     def read(self):
-        return self.sense.get_pressure()
+        return {
+            "value": self.sense.get_pressure()
+        }

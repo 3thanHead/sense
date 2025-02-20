@@ -1,6 +1,6 @@
 import time
 from redis_client import RedisClient
-from sensors import ColorSensor, Compass, Accelerometer, HumiditySensor, PressureSensor, TemperatureSensor
+from sensors import ColorSensor, OrientationSensor, HumiditySensor, PressureSensor, TemperatureSensor
 
 def publish_sensor_data(sensors):
     redis = RedisClient()
@@ -12,11 +12,10 @@ def main():
     while True:
         publish_sensor_data([
             ColorSensor(), 
-            Accelerometer(),
+            OrientationSensor(),
             PressureSensor(),
             TemperatureSensor(), 
-            HumiditySensor(),
-            Compass()
+            HumiditySensor()
         ])
 
 if __name__ == "__main__":

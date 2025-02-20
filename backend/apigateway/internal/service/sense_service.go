@@ -5,33 +5,31 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/3thanHead/apigateway/graph/model"
 	"github.com/redis/go-redis/v9"
 )
 
-func ReceiveColors(ctx context.Context, redisMessages <-chan *redis.Message) <-chan *model.Color {
-	colorChan := make(chan *model.Color)
-	color := &model.Color{}
-
+func ReceiveData[T interface{}](ctx context.Context, redisMessages <-chan *redis.Message, outputChan chan<- T) {
 	go func() {
-		defer close(colorChan)
+		defer close(outputChan)
 		for {
-			msg := <-redisMessages
-
-			fmt.Println("Received message:", msg.Payload)
-
-			if err := json.Unmarshal([]byte(msg.Payload), &color); err != nil {
-				fmt.Println("Error unmarshalling color:", err)
-				continue
-			}
-
 			select {
-			case colorChan <- color:
+			case msg := <-redisMessages:
+				fmt.Println("Received message:", msg.Payload)
+
+				var data T
+				if err := json.Unmarshal([]byte(msg.Payload), &data); err != nil {
+					fmt.Println("Error unmarshalling data:", err)
+					continue
+				}
+
+				select {
+				case outputChan <- data:
+				case <-ctx.Done():
+					return
+				}
 			case <-ctx.Done():
 				return
 			}
 		}
 	}()
-
-	return colorChan
 }

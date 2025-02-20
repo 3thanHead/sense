@@ -8,8 +8,26 @@ type Color struct {
 	B *int32 `json:"b,omitempty"`
 }
 
+type Humidity struct {
+	Value *float64 `json:"value,omitempty"`
+}
+
+type Orientation struct {
+	Pitch *float64 `json:"pitch,omitempty"`
+	Roll  *float64 `json:"roll,omitempty"`
+	Yaw   *float64 `json:"yaw,omitempty"`
+}
+
+type Pressure struct {
+	Value *float64 `json:"value,omitempty"`
+}
+
 type Query struct {
 }
 
 type Subscription struct {
+}
+
+type Temperature struct {
+	Value *float64 `json:"value,omitempty"`
 }

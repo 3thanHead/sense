@@ -6,11 +6,33 @@ type Color {
   b: Int
 }
 
+type Orientation {
+  pitch: Float,
+  roll: Float,
+  yaw: Float
+}
+
+type Temperature {
+  value: Float
+}
+
+type Humidity {
+  value: Float
+}
+
+type Pressure {
+  value: Float
+}
+
 type Query {
-  color: Color
+  placeholder: String
 }
 
 type Subscription {
-  color: Color
+  color: Color 
+  temperature: Temperature
+  humidity: Humidity
+  pressure: Pressure
+  orientation: Orientation
 }
 

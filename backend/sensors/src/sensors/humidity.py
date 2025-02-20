@@ -7,4 +7,6 @@ class HumiditySensor(Sensor):
         # Initialize humidity sensor specific settings if any
 
     def read(self):
-        return self.sense.get_humidity()
+        return {
+            "value": self.sense.get_humidity()
+        }

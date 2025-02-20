@@ -10,9 +10,13 @@
   },
   "dependencies": {
     "@mdi/font": "7.4.47",
+    "apexcharts": "^4.5.0",
+    "graphql-ws": "^6.0.4",
     "pinia": "^3.0.1",
     "roboto-fontface": "*",
     "vue": "^3.4.31",
+    "vue-router": "^4.5.0",
+    "vue3-apexcharts": "^1.8.0",
     "vuetify": "^3.6.14"
   },
   "devDependencies": {

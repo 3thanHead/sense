@@ -54,20 +54,46 @@ type ComplexityRoot struct {
 		R func(childComplexity int) int
 	}
 
+	Humidity struct {
+		Value func(childComplexity int) int
+	}
+
+	Orientation struct {
+		Pitch func(childComplexity int) int
+		Roll  func(childComplexity int) int
+		Yaw   func(childComplexity int) int
+	}
+
+	Pressure struct {
+		Value func(childComplexity int) int
+	}
+
 	Query struct {
-		Color func(childComplexity int) int
+		Placeholder func(childComplexity int) int
 	}
 
 	Subscription struct {
-		Color func(childComplexity int) int
+		Color       func(childComplexity int) int
+		Humidity    func(childComplexity int) int
+		Orientation func(childComplexity int) int
+		Pressure    func(childComplexity int) int
+		Temperature func(childComplexity int) int
+	}
+
+	Temperature struct {
+		Value func(childComplexity int) int
 	}
 }
 
 type QueryResolver interface {
-	Color(ctx context.Context) (*model.Color, error)
+	Placeholder(ctx context.Context) (*string, error)
 }
 type SubscriptionResolver interface {
 	Color(ctx context.Context) (<-chan *model.Color, error)
+	Temperature(ctx context.Context) (<-chan *model.Temperature, error)
+	Humidity(ctx context.Context) (<-chan *model.Humidity, error)
+	Pressure(ctx context.Context) (<-chan *model.Pressure, error)
+	Orientation(ctx context.Context) (<-chan *model.Orientation, error)
 }
 
 type executableSchema struct {
@@ -110,12 +136,47 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Color.R(childComplexity), true
 
-	case "Query.color":
-		if e.complexity.Query.Color == nil {
+	case "Humidity.value":
+		if e.complexity.Humidity.Value == nil {
 			break
 		}
 
-		return e.complexity.Query.Color(childComplexity), true
+		return e.complexity.Humidity.Value(childComplexity), true
+
+	case "Orientation.pitch":
+		if e.complexity.Orientation.Pitch == nil {
+			break
+		}
+
+		return e.complexity.Orientation.Pitch(childComplexity), true
+
+	case "Orientation.roll":
+		if e.complexity.Orientation.Roll == nil {
+			break
+		}
+
+		return e.complexity.Orientation.Roll(childComplexity), true
+
+	case "Orientation.yaw":
+		if e.complexity.Orientation.Yaw == nil {
+			break
+		}
+
+		return e.complexity.Orientation.Yaw(childComplexity), true
+
+	case "Pressure.value":
+		if e.complexity.Pressure.Value == nil {
+			break
+		}
+
+		return e.complexity.Pressure.Value(childComplexity), true
+
+	case "Query.placeholder":
+		if e.complexity.Query.Placeholder == nil {
+			break
+		}
+
+		return e.complexity.Query.Placeholder(childComplexity), true
 
 	case "Subscription.color":
 		if e.complexity.Subscription.Color == nil {
@@ -123,6 +184,41 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Subscription.Color(childComplexity), true
+
+	case "Subscription.humidity":
+		if e.complexity.Subscription.Humidity == nil {
+			break
+		}
+
+		return e.complexity.Subscription.Humidity(childComplexity), true
+
+	case "Subscription.orientation":
+		if e.complexity.Subscription.Orientation == nil {
+			break
+		}
+
+		return e.complexity.Subscription.Orientation(childComplexity), true
+
+	case "Subscription.pressure":
+		if e.complexity.Subscription.Pressure == nil {
+			break
+		}
+
+		return e.complexity.Subscription.Pressure(childComplexity), true
+
+	case "Subscription.temperature":
+		if e.complexity.Subscription.Temperature == nil {
+			break
+		}
+
+		return e.complexity.Subscription.Temperature(childComplexity), true
+
+	case "Temperature.value":
+		if e.complexity.Temperature.Value == nil {
+			break
+		}
+
+		return e.complexity.Temperature.Value(childComplexity), true
 
 	}
 	return 0, false
@@ -495,8 +591,8 @@ func (ec *executionContext) fieldContext_Color_b(_ context.Context, field graphq
 	return fc, nil
 }
 
-func (ec *executionContext) _Query_color(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_color(ctx, field)
+func (ec *executionContext) _Humidity_value(ctx context.Context, field graphql.CollectedField, obj *model.Humidity) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Humidity_value(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -509,7 +605,7 @@ func (ec *executionContext) _Query_color(ctx context.Context, field graphql.Coll
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Color(rctx)
+		return obj.Value, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -518,27 +614,224 @@ func (ec *executionContext) _Query_color(ctx context.Context, field graphql.Coll
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*model.Color)
+	res := resTmp.(*float64)
 	fc.Result = res
-	return ec.marshalOColor2ᚖgithubᚗcomᚋ3thanHeadᚋapigatewayᚋgraphᚋmodelᚐColor(ctx, field.Selections, res)
+	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Query_color(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Humidity_value(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Humidity",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Orientation_pitch(ctx context.Context, field graphql.CollectedField, obj *model.Orientation) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Orientation_pitch(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Pitch, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*float64)
+	fc.Result = res
+	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Orientation_pitch(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Orientation",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Orientation_roll(ctx context.Context, field graphql.CollectedField, obj *model.Orientation) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Orientation_roll(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Roll, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*float64)
+	fc.Result = res
+	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Orientation_roll(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Orientation",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Orientation_yaw(ctx context.Context, field graphql.CollectedField, obj *model.Orientation) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Orientation_yaw(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Yaw, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*float64)
+	fc.Result = res
+	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Orientation_yaw(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Orientation",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Pressure_value(ctx context.Context, field graphql.CollectedField, obj *model.Pressure) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Pressure_value(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Value, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*float64)
+	fc.Result = res
+	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Pressure_value(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Pressure",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_placeholder(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_placeholder(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().Placeholder(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_placeholder(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Query",
 		Field:      field,
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "r":
-				return ec.fieldContext_Color_r(ctx, field)
-			case "g":
-				return ec.fieldContext_Color_g(ctx, field)
-			case "b":
-				return ec.fieldContext_Color_b(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Color", field.Name)
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -733,6 +1026,287 @@ func (ec *executionContext) fieldContext_Subscription_color(_ context.Context, f
 				return ec.fieldContext_Color_b(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Color", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Subscription_temperature(ctx context.Context, field graphql.CollectedField) (ret func(ctx context.Context) graphql.Marshaler) {
+	fc, err := ec.fieldContext_Subscription_temperature(ctx, field)
+	if err != nil {
+		return nil
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = nil
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Subscription().Temperature(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return nil
+	}
+	if resTmp == nil {
+		return nil
+	}
+	return func(ctx context.Context) graphql.Marshaler {
+		select {
+		case res, ok := <-resTmp.(<-chan *model.Temperature):
+			if !ok {
+				return nil
+			}
+			return graphql.WriterFunc(func(w io.Writer) {
+				w.Write([]byte{'{'})
+				graphql.MarshalString(field.Alias).MarshalGQL(w)
+				w.Write([]byte{':'})
+				ec.marshalOTemperature2ᚖgithubᚗcomᚋ3thanHeadᚋapigatewayᚋgraphᚋmodelᚐTemperature(ctx, field.Selections, res).MarshalGQL(w)
+				w.Write([]byte{'}'})
+			})
+		case <-ctx.Done():
+			return nil
+		}
+	}
+}
+
+func (ec *executionContext) fieldContext_Subscription_temperature(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Subscription",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "value":
+				return ec.fieldContext_Temperature_value(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Temperature", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Subscription_humidity(ctx context.Context, field graphql.CollectedField) (ret func(ctx context.Context) graphql.Marshaler) {
+	fc, err := ec.fieldContext_Subscription_humidity(ctx, field)
+	if err != nil {
+		return nil
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = nil
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Subscription().Humidity(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return nil
+	}
+	if resTmp == nil {
+		return nil
+	}
+	return func(ctx context.Context) graphql.Marshaler {
+		select {
+		case res, ok := <-resTmp.(<-chan *model.Humidity):
+			if !ok {
+				return nil
+			}
+			return graphql.WriterFunc(func(w io.Writer) {
+				w.Write([]byte{'{'})
+				graphql.MarshalString(field.Alias).MarshalGQL(w)
+				w.Write([]byte{':'})
+				ec.marshalOHumidity2ᚖgithubᚗcomᚋ3thanHeadᚋapigatewayᚋgraphᚋmodelᚐHumidity(ctx, field.Selections, res).MarshalGQL(w)
+				w.Write([]byte{'}'})
+			})
+		case <-ctx.Done():
+			return nil
+		}
+	}
+}
+
+func (ec *executionContext) fieldContext_Subscription_humidity(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Subscription",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "value":
+				return ec.fieldContext_Humidity_value(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Humidity", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Subscription_pressure(ctx context.Context, field graphql.CollectedField) (ret func(ctx context.Context) graphql.Marshaler) {
+	fc, err := ec.fieldContext_Subscription_pressure(ctx, field)
+	if err != nil {
+		return nil
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = nil
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Subscription().Pressure(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return nil
+	}
+	if resTmp == nil {
+		return nil
+	}
+	return func(ctx context.Context) graphql.Marshaler {
+		select {
+		case res, ok := <-resTmp.(<-chan *model.Pressure):
+			if !ok {
+				return nil
+			}
+			return graphql.WriterFunc(func(w io.Writer) {
+				w.Write([]byte{'{'})
+				graphql.MarshalString(field.Alias).MarshalGQL(w)
+				w.Write([]byte{':'})
+				ec.marshalOPressure2ᚖgithubᚗcomᚋ3thanHeadᚋapigatewayᚋgraphᚋmodelᚐPressure(ctx, field.Selections, res).MarshalGQL(w)
+				w.Write([]byte{'}'})
+			})
+		case <-ctx.Done():
+			return nil
+		}
+	}
+}
+
+func (ec *executionContext) fieldContext_Subscription_pressure(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Subscription",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "value":
+				return ec.fieldContext_Pressure_value(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Pressure", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Subscription_orientation(ctx context.Context, field graphql.CollectedField) (ret func(ctx context.Context) graphql.Marshaler) {
+	fc, err := ec.fieldContext_Subscription_orientation(ctx, field)
+	if err != nil {
+		return nil
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = nil
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Subscription().Orientation(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return nil
+	}
+	if resTmp == nil {
+		return nil
+	}
+	return func(ctx context.Context) graphql.Marshaler {
+		select {
+		case res, ok := <-resTmp.(<-chan *model.Orientation):
+			if !ok {
+				return nil
+			}
+			return graphql.WriterFunc(func(w io.Writer) {
+				w.Write([]byte{'{'})
+				graphql.MarshalString(field.Alias).MarshalGQL(w)
+				w.Write([]byte{':'})
+				ec.marshalOOrientation2ᚖgithubᚗcomᚋ3thanHeadᚋapigatewayᚋgraphᚋmodelᚐOrientation(ctx, field.Selections, res).MarshalGQL(w)
+				w.Write([]byte{'}'})
+			})
+		case <-ctx.Done():
+			return nil
+		}
+	}
+}
+
+func (ec *executionContext) fieldContext_Subscription_orientation(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Subscription",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "pitch":
+				return ec.fieldContext_Orientation_pitch(ctx, field)
+			case "roll":
+				return ec.fieldContext_Orientation_roll(ctx, field)
+			case "yaw":
+				return ec.fieldContext_Orientation_yaw(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Orientation", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Temperature_value(ctx context.Context, field graphql.CollectedField, obj *model.Temperature) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Temperature_value(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Value, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*float64)
+	fc.Result = res
+	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Temperature_value(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Temperature",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
 		},
 	}
 	return fc, nil
@@ -2737,6 +3311,118 @@ func (ec *executionContext) _Color(ctx context.Context, sel ast.SelectionSet, ob
 	return out
 }
 
+var humidityImplementors = []string{"Humidity"}
+
+func (ec *executionContext) _Humidity(ctx context.Context, sel ast.SelectionSet, obj *model.Humidity) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, humidityImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Humidity")
+		case "value":
+			out.Values[i] = ec._Humidity_value(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var orientationImplementors = []string{"Orientation"}
+
+func (ec *executionContext) _Orientation(ctx context.Context, sel ast.SelectionSet, obj *model.Orientation) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, orientationImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Orientation")
+		case "pitch":
+			out.Values[i] = ec._Orientation_pitch(ctx, field, obj)
+		case "roll":
+			out.Values[i] = ec._Orientation_roll(ctx, field, obj)
+		case "yaw":
+			out.Values[i] = ec._Orientation_yaw(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var pressureImplementors = []string{"Pressure"}
+
+func (ec *executionContext) _Pressure(ctx context.Context, sel ast.SelectionSet, obj *model.Pressure) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, pressureImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Pressure")
+		case "value":
+			out.Values[i] = ec._Pressure_value(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var queryImplementors = []string{"Query"}
 
 func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) graphql.Marshaler {
@@ -2756,7 +3442,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Query")
-		case "color":
+		case "placeholder":
 			field := field
 
 			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
@@ -2765,7 +3451,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_color(ctx, field)
+				res = ec._Query_placeholder(ctx, field)
 				return res
 			}
 
@@ -2821,9 +3507,53 @@ func (ec *executionContext) _Subscription(ctx context.Context, sel ast.Selection
 	switch fields[0].Name {
 	case "color":
 		return ec._Subscription_color(ctx, fields[0])
+	case "temperature":
+		return ec._Subscription_temperature(ctx, fields[0])
+	case "humidity":
+		return ec._Subscription_humidity(ctx, fields[0])
+	case "pressure":
+		return ec._Subscription_pressure(ctx, fields[0])
+	case "orientation":
+		return ec._Subscription_orientation(ctx, fields[0])
 	default:
 		panic("unknown field " + strconv.Quote(fields[0].Name))
 	}
+}
+
+var temperatureImplementors = []string{"Temperature"}
+
+func (ec *executionContext) _Temperature(ctx context.Context, sel ast.SelectionSet, obj *model.Temperature) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, temperatureImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Temperature")
+		case "value":
+			out.Values[i] = ec._Temperature_value(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
 }
 
 var __DirectiveImplementors = []string{"__Directive"}
@@ -3477,6 +4207,29 @@ func (ec *executionContext) marshalOColor2ᚖgithubᚗcomᚋ3thanHeadᚋapigatew
 	return ec._Color(ctx, sel, v)
 }
 
+func (ec *executionContext) unmarshalOFloat2ᚖfloat64(ctx context.Context, v any) (*float64, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := graphql.UnmarshalFloatContext(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOFloat2ᚖfloat64(ctx context.Context, sel ast.SelectionSet, v *float64) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	res := graphql.MarshalFloatContext(*v)
+	return graphql.WrapContextMarshaler(ctx, res)
+}
+
+func (ec *executionContext) marshalOHumidity2ᚖgithubᚗcomᚋ3thanHeadᚋapigatewayᚋgraphᚋmodelᚐHumidity(ctx context.Context, sel ast.SelectionSet, v *model.Humidity) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Humidity(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalOInt2ᚖint32(ctx context.Context, v any) (*int32, error) {
 	if v == nil {
 		return nil, nil
@@ -3493,6 +4246,20 @@ func (ec *executionContext) marshalOInt2ᚖint32(ctx context.Context, sel ast.Se
 	return res
 }
 
+func (ec *executionContext) marshalOOrientation2ᚖgithubᚗcomᚋ3thanHeadᚋapigatewayᚋgraphᚋmodelᚐOrientation(ctx context.Context, sel ast.SelectionSet, v *model.Orientation) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Orientation(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOPressure2ᚖgithubᚗcomᚋ3thanHeadᚋapigatewayᚋgraphᚋmodelᚐPressure(ctx context.Context, sel ast.SelectionSet, v *model.Pressure) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Pressure(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalOString2ᚖstring(ctx context.Context, v any) (*string, error) {
 	if v == nil {
 		return nil, nil
@@ -3507,6 +4274,13 @@ func (ec *executionContext) marshalOString2ᚖstring(ctx context.Context, sel as
 	}
 	res := graphql.MarshalString(*v)
 	return res
+}
+
+func (ec *executionContext) marshalOTemperature2ᚖgithubᚗcomᚋ3thanHeadᚋapigatewayᚋgraphᚋmodelᚐTemperature(ctx context.Context, sel ast.SelectionSet, v *model.Temperature) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Temperature(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalO__EnumValue2ᚕgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐEnumValueᚄ(ctx context.Context, sel ast.SelectionSet, v []introspection.EnumValue) graphql.Marshaler {

@@ -7,4 +7,6 @@ class TemperatureSensor(Sensor):
         # Initialize temperature sensor specific settings if any
 
     def read(self):
-        return self.sense.get_temperature()
+        return {
+            "value": self.sense.get_temperature()
+        }
